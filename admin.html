@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>ÉlecProDevis – Historique</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>📁 Historique des devis</h1>
+
+  <section>
+    <table id="tableHistorique">
+      <thead>
+        <tr>
+          <th>Numéro</th>
+          <th>Client</th>
+          <th>Technicien</th>
+          <th>Date</th>
+          <th>Total TTC</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button onclick="exporterCSV()">📤 Exporter CSV</button>
+  </section>
+
+  <script>
+    function afficherHistorique() {
+      const historique = JSON.parse(localStorage.getItem("historiqueDevis") || "[]");
+      const tbody = document.querySelector("#tableHistorique tbody");
+      historique.forEach(d => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${d.numero}</td>
+          <td>${d.client}</td>
+          <td>${d.electricien}</td>
+          <td>${d.date}</td>
+          <td>${d.totalTTC} FCFA</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function exporterCSV() {
+      const historique = JSON.parse(localStorage.getItem("historiqueDevis") || "[]");
+      let csv = "Numéro,Client,Technicien,Date,Total TTC\n";
+      historique.forEach(d => {
+        csv += `${d.numero},${d.client},${d.electricien},${d.date},${d.totalTTC} FCFA\n`;
+      });
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "historique_devis.csv";
+      a.click();
+    }
+
+    afficherHistorique();
+  </script>
+</body>
+</html>

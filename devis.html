@@ -3,25 +3,129 @@
 <head>
   <meta charset="UTF-8">
   <title>ÉlecProDevis – Devis final</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #0077cc;
+      margin-bottom: 20px;
+    }
+    .entete {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+    .entete div {
+      flex: 1 1 45%;
+      margin-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+      font-size: 0.95em;
+    }
+    th {
+      background-color: #0077cc;
+      color: white;
+    }
+    .total {
+      text-align: right;
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-top: 10px;
+    }
+    .actions {
+      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .actions button {
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+      flex: 1 1 200px;
+    }
+    .actions button:hover {
+      background-color: #005fa3;
+    }
+
+    @media print {
+      .actions {
+        display: none;
+      }
+      body {
+        background: white;
+      }
+      .container {
+        box-shadow: none;
+        padding: 0;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>📄 Devis généré</h1>
+  <div class="container">
+    <h1>📄 Devis généré</h1>
 
-  <section id="resultat">
-    <!-- Le devis sera injecté ici par script.js -->
-  </section>
+    <div class="entete" id="enteteDevis">
+      <!-- Injecté par script.js -->
+    </div>
 
-  <section>
-    <button onclick="telechargerPDF()">📥 Télécharger PDF</button>
-    <button onclick="envoyerWhatsApp()">📲 Envoyer par WhatsApp</button>
-    <button onclick="window.location.href='admin.html'">📁 Voir l’historique</button>
-    <button onclick="window.location.href='accueil.html'">🔁 Recommencer un devis</button>
-  </section>
+    <table id="tableDevis">
+      <thead>
+        <tr>
+          <th>Produit</th>
+          <th>Quantité</th>
+          <th>PU HT</th>
+          <th>TVA (%)</th>
+          <th>Total TTC</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <p class="total" id="totalGlobal">Total TTC : ...</p>
+
+    <div class="actions">
+      <button onclick="telechargerPDF()">📥 Télécharger PDF</button>
+      <button onclick="envoyerWhatsApp()">📲 Envoyer par WhatsApp</button>
+      <button onclick="window.location.href='admin.html'">📁 Voir l’historique</button>
+      <button onclick="window.location.href='accueil.html'">🔁 Recommencer un devis</button>
+    </div>
+  </div>
 
   <script src="script.js"></script>
   <script>
-    calculerDevis();
+    calculerDevis(); // Cette fonction doit injecter les données dans #enteteDevis, #tableDevis et #totalGlobal
   </script>
 </body>
 </html>

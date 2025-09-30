@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>ÉlecProDevis – Debug</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    pre {
+      background: #f4f4f4;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      max-height: 500px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧠 Debug – Visualisation du stockage</h1>
+
+  <section>
+    <button onclick="afficherStorage()">🔍 Voir le localStorage</button>
+    <button onclick="viderStorage()">🧹 Vider le localStorage</button>
+    <button onclick="window.location.href='accueil.html'">🏠 Retour à l’accueil</button>
+  </section>
+
+  <section>
+    <h3>📦 Contenu actuel :</h3>
+    <pre id="contenu"></pre>
+  </section>
+
+  <script>
+    function afficherStorage() {
+      let contenu = "";
+      for (let i = 0; i < localStorage.length; i++) {
+        const cle = localStorage.key(i);
+        const valeur = localStorage.getItem(cle);
+        contenu += `🔹 ${cle} :\n${valeur}\n\n`;
+      }
+      document.getElementById("contenu").textContent = contenu || "Aucune donnée enregistrée.";
+    }
+
+    function viderStorage() {
+      if (confirm("⚠️ Confirmer la suppression de toutes les données ?")) {
+        localStorage.clear();
+        document.getElementById("contenu").textContent = "✅ Stockage vidé.";
+      }
+    }
+  </script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>ÉlecProDevis – Paiement</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <h1>💳 Déblocage de la personnalisation</h1>
+
+  <section>
+    <p>Pour ajouter ton logo, nom d’entreprise et contact dans le devis, active la personnalisation premium.</p>
+    <button onclick="validerPaiement()">✅ Activer la personnalisation</button>
+    <button onclick="window.location.href='personnalisation.html'">➡️ Continuer sans paiement</button>
+  </section>
+
+  <script>
+    function validerPaiement() {
+      localStorage.setItem("paiementValide", "true");
+      window.location.href = "personnalisation.html";
+    }
+  </script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log("✅ Service Worker actif"))
+      .catch(err => console.error("❌ Erreur SW", err));
+  }
+</script>
+
+</body>
+</html>

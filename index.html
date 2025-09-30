@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Présentation – ÉlecProDevis</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      padding: 20px;
+      color: #333;
+    }
+    .fiche {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #0077cc;
+      margin-bottom: 20px;
+    }
+    h2 {
+      color: #444;
+      margin-top: 30px;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    .install {
+      text-align: center;
+      margin-top: 40px;
+    }
+    .install button {
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .install button:hover {
+      background-color: #005fa3;
+    }
+  </style>
+</head>
+<body>
+  <div class="fiche">
+    <h1>🔧 ÉlecProDevis</h1>
+    <p><strong>Générateur de devis universel</strong> pour techniciens, artisans et indépendants. Créez, personnalisez, exportez et partagez vos devis en quelques clics.</p>
+
+    <h2>🎯 Fonctionnalités principales</h2>
+    <ul>
+      <li>✅ Produits standards + ajout manuel</li>
+      <li>🧠 Calcul automatique HT, TVA, TTC</li>
+      <li>📄 Export PDF professionnel</li>
+      <li>📲 Envoi direct par WhatsApp</li>
+      <li>🖼️ Personnalisation avec logo, nom, contact</li>
+      <li>📦 Historique des devis + export CSV</li>
+      <li>🔁 Mode installable sur mobile (PWA)</li>
+    </ul>
+
+    <h2>👨‍🔧 Métiers concernés</h2>
+    <ul>
+      <li>Électriciens</li>
+      <li>Plombiers</li>
+      <li>Soudeurs</li>
+      <li>Menuisiers</li>
+      <li>Mécaniciens</li>
+      <li>Artisans indépendants</li>
+    </ul>
+
+    <h2>📱 Mode installable</h2>
+    <p>Installez l’application sur votre téléphone comme une vraie app :</p>
+    <ul>
+      <li>Ouvrez le lien dans Chrome ou Edge</li>
+      <li>Cliquez sur “Ajouter à l’écran d’accueil”</li>
+      <li>Utilisez-la même hors connexion</li>
+    </ul>
+
+    <div class="install">
+      <button onclick="window.location.href='accueil.html'">🚀 Lancer l'application</button>
+    </div>
+  </div>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>ÉlecProDevis – Accueil</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <h1>🏠 Générateur de devis universel</h1>
+
+  <section>
+    <label>👤 Nom du client :
+      <input type="text" id="client">
+    </label>
+    <label>👨‍🔧 Nom du technicien :
+      <input type="text" id="electricien">
+    </label>
+    <label>📅 Date du devis :
+      <input type="date" id="date">
+    </label>
+    <label>🛠️ Heures de main-d’œuvre :
+      <input type="number" id="heures" placeholder="Ex : 3">
+    </label>
+    <label>💰 Tarif horaire (FCFA) :
+      <input type="number" id="tarifHoraire" placeholder="Ex : 5000">
+    </label>
+    <label>📈 TVA main-d’œuvre (%) :
+      <input type="number" id="tvaMain" value="20">
+    </label>
+    <button onclick="validerAccueil()">➡️ Continuer</button>
+  </section>
+
+  <script>
+    function validerAccueil() {
+      const client = document.getElementById("client").value.trim();
+      const electricien = document.getElementById("electricien").value.trim();
+      const date = document.getElementById("date").value;
+      const heures = document.getElementById("heures").value;
+      const tarifHoraire = document.getElementById("tarifHoraire").value;
+      const tvaMain = document.getElementById("tvaMain").value;
+
+      if (!client || !electricien || !date || !heures || !tarifHoraire || !tvaMain) {
+        alert("Veuillez remplir tous les champs.");
+        return;
+      }
+
+      localStorage.setItem("client", client);
+      localStorage.setItem("electricien", electricien);
+      localStorage.setItem("date", date);
+      localStorage.setItem("heures", heures);
+      localStorage.setItem("tarifHoraire", tarifHoraire);
+      localStorage.setItem("tvaMain", tvaMain);
+      localStorage.setItem("produits", "[]"); // reset produits
+
+      window.location.href = "produits.html";
+    }
+  </script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log("✅ Service Worker actif"))
+      .catch(err => console.error("❌ Erreur SW", err));
+  }
+</script>
+
+</body>
+</html>

@@ -2,168 +2,92 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>ÉlecProDevis – Produits du devis</title>
+  <title>ÉlecProDevis – Produits</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
-
-  <style>
-    input[type="text"], input[type="number"] {
-      max-width: 300px;
-      margin-bottom: 10px;
-    }
-    .grille {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 15px;
-      margin-top: 10px;
-    }
-    .produit {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 10px;
-      background: #f9f9f9;
-      transition: transform 0.2s ease;
-    }
-    .produit:hover {
-      transform: scale(1.03);
-    }
-    .produit img {
-      width: 80px;
-      height: auto;
-      margin-bottom: 8px;
-    }
-    .produit span {
-      font-weight: 500;
-      text-align: center;
-    }
-  </style>
 </head>
 <body>
-  <h1>📋 Produits du devis</h1>
+  <h1>📦 Sélection des produits</h1>
 
-  <section id="produitsContainer">
-    <div class="categorie">
-      <h3>⚡ Produits standards</h3>
-      <div class="grille">
-        <label class="produit">
-          <input type="checkbox" value="Piquet cuivre|5000|20">
-          <img src="images/piquet.png" alt="Piquet cuivre">
-          <span>Piquet cuivre</span>
-        </label>
-        <label class="produit">
-          <input type="checkbox" value="Boîte étanche|3500|20">
-          <img src="images/boite.png" alt="Boîte étanche">
-          <span>Boîte étanche</span>
-        </label>
-        <label class="produit">
-          <input type="checkbox" value="Câble 3G2.5|1200|18">
-          <img src="images/cable.png" alt="Câble 3G2.5">
-          <span>Câble 3G2.5</span>
-        </label>
-        <label class="produit">
-          <input type="checkbox" value="Gaine ICTA|800|18">
-          <img src="images/gaine.png" alt="Gaine ICTA">
-          <span>Gaine ICTA</span>
-        </label>
-        <label class="produit">
-          <input type="checkbox" value="Tableau électrique|15000|20">
-          <img src="images/tableau.png" alt="Tableau électrique">
-          <span>Tableau électrique</span>
-        </label>
-        <label class="produit">
-          <input type="checkbox" value="Disjoncteur 16A|2500|20">
-          <img src="images/disjoncteur.png" alt="Disjoncteur 16A">
-          <span>Disjoncteur 16A</span>
-        </label>
-        <label class="produit">
-          <input type="checkbox" value="Prise murale|1200|20">
-          <img src="images/prise.png" alt="Prise murale">
-          <span>Prise murale</span>
-        </label>
-        <label class="produit">
-          <input type="checkbox" value="Boîtier de dérivation|900|20">
-          <img src="images/boitier.png" alt="Boîtier de dérivation">
-          <span>Boîtier de dérivation</span>
-        </label>
-      </div>
-    </div>
-
-    <div class="categorie">
-      <h3>➕ Ajouter un produit personnalisé</h3>
-      <label>Nom du produit :
-        <input type="text" id="nomManuel" placeholder="Ex : Pompe à eau">
-      </label>
-      <label>Prix HT :
-        <input type="number" id="prixManuel" placeholder="Ex : 15000">
-      </label>
-      <label>TVA (%) :
-        <input type="number" id="tvaManuel" value="20">
-      </label>
-      <button onclick="ajouterManuel()">✅ Ajouter au devis</button>
-    </div>
+  <section>
+    <div class="grille" id="grilleProduits"></div>
   </section>
 
-  <section style="text-align:center;">
-    <button onclick="validerProduits()">📄 Générer le devis</button>
-    <button onclick="window.location.href='accueil.html'">🏠 Retour à l’accueil</button>
+  <section>
+    <h3>➕ Ajouter un produit manuel</h3>
+    <label>Nom :
+      <input type="text" id="nomManuel">
+    </label>
+    <label>Prix unitaire HT :
+      <input type="number" id="prixManuel">
+    </label>
+    <label>TVA (%) :
+      <input type="number" id="tvaManuel" value="20">
+    </label>
+    <button onclick="ajouterManuel()">Ajouter</button>
   </section>
 
+  <button onclick="genererDevis()">➡️ Générer le devis</button>
+
+  <script src="script.js"></script>
   <script>
-    function validerProduits() {
-      const cases = document.querySelectorAll('input[type="checkbox"]:checked');
-      const produits = JSON.parse(localStorage.getItem("produits") || "[]");
+    const produits = [
+      { nom: "Piquet de terre", prix: 1500, tva: 18, image: "images/piquet.png" },
+      { nom: "Boîte de dérivation", prix: 800, tva: 18, image: "images/boite.png" },
+      { nom: "Câble 3G2.5", prix: 1200, tva: 18, image: "images/cable.png" },
+      { nom: "Gaine ICTA", prix: 500, tva: 18, image: "images/gaine.png" },
+      { nom: "Tableau électrique", prix: 7500, tva: 18, image: "images/tableau.png" },
+      { nom: "Disjoncteur 16A", prix: 1800, tva: 18, image: "images/disjoncteur.png" },
+      { nom: "Prise murale", prix: 1000, tva: 18, image: "images/prise.png" },
+      { nom: "Boîtier encastré", prix: 600, tva: 18, image: "images/boitier.png" }
+    ];
 
-      cases.forEach(c => {
-        const [nom, prix, tva] = c.value.split("|");
-        produits.push({
-          nom,
-          prix: parseFloat(prix),
-          tva: parseInt(tva),
-          quantite: 1,
-          image: c.nextElementSibling.src
-        });
+    const selection = [];
+
+    function afficherGrille() {
+      const grille = document.getElementById("grilleProduits");
+      produits.forEach((p, index) => {
+        const div = document.createElement("div");
+        div.className = "produit";
+        div.innerHTML = `
+          <img src="${p.image}" alt="${p.nom}">
+          <span>${p.nom}</span>
+          <label>Quantité :
+            <input type="number" id="qte${index}" min="0" value="0">
+          </label>
+        `;
+        grille.appendChild(div);
       });
-
-      localStorage.setItem("produits", JSON.stringify(produits));
-      window.location.href = "produits.html";
     }
 
     function ajouterManuel() {
       const nom = document.getElementById("nomManuel").value.trim();
       const prix = parseFloat(document.getElementById("prixManuel").value);
-      const tva = parseInt(document.getElementById("tvaManuel").value);
-
+      const tva = parseFloat(document.getElementById("tvaManuel").value);
       if (!nom || isNaN(prix) || isNaN(tva)) {
-        alert("Veuillez remplir tous les champs.");
+        alert("Remplis tous les champs du produit manuel.");
         return;
       }
-
-      const produits = JSON.parse(localStorage.getItem("produits") || "[]");
-      produits.push({
-        nom,
-        prix,
-        tva,
-        quantite: 1,
-        image: "" // pas d’image pour les produits manuels
-      });
-
-      localStorage.setItem("produits", JSON.stringify(produits));
-      alert("Produit ajouté !");
-      document.getElementById("nomManuel").value = "";
-      document.getElementById("prixManuel").value = "";
-      document.getElementById("tvaManuel").value = "20";
+      selection.push({ nom, prix, tva, quantite: 1 });
+      alert("✅ Produit manuel ajouté !");
     }
-  </script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(() => console.log("✅ Service Worker actif"))
-      .catch(err => console.error("❌ Erreur SW", err));
-  }
-</script>
 
+    function genererDevis() {
+      produits.forEach((p, index) => {
+        const qte = parseInt(document.getElementById("qte" + index).value);
+        if (qte > 0) {
+          selection.push({ ...p, quantite: qte });
+        }
+      });
+      if (selection.length === 0) {
+        alert("Ajoute au moins un produit.");
+        return;
+      }
+      localStorage.setItem("produits", JSON.stringify(selection));
+      const paiementValide = localStorage.getItem("paiementValide") === "true";
+      window.location.href = paiementValide ? "personnalisation.html" : "paiement.html";
+    }
+
+    afficherGrille();
+  </script>
 </body>
 </html>

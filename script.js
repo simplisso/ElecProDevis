@@ -161,4 +161,68 @@ function envoyerWhatsApp() {
 
   const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(message)}`;
   window.open(url, "_blank");
+  function calculerDevis() {
+  const client = localStorage.getItem("client");
+  const electricien = localStorage.getItem("electricien");
+  const date = localStorage.getItem("date");
+  const heures = parseFloat(localStorage.getItem("heures") || "0");
+  const tarifHoraire = parseFloat(localStorage.getItem("tarifHoraire") || "0");
+  const tvaMain = parseFloat(localStorage.getItem("tvaMain") || "0");
+  const produits = JSON.parse(localStorage.getItem("produits") || "[]");
+  const nomEntreprise = localStorage.getItem("nomEntreprise") || "Entreprise";
+  const contactEntreprise = localStorage.getItem("contactEntreprise") || "Contact";
+  const logoEntreprise = localStorage.getItem("logoEntreprise") || "";
+
+  const entete = document.getElementById("enteteDevis");
+  entete.innerHTML = `
+    <div><strong>Client :</strong> ${client}<br><strong>Date :</strong> ${date}</div>
+    <div><strong>Technicien :</strong> ${electricien}<br><strong>Heures :</strong> ${heures} h</div>
+    <div><strong>Entreprise :</strong> ${nomEntreprise}<br><strong>Contact :</strong> ${contactEntreprise}</div>
+    ${logoEntreprise ? `<div><img src="${logoEntreprise}" alt="Logo" style="max-height:60px;"></div>` : ""}
+  `;
+
+  const tbody = document.querySelector("#tableDevis tbody");
+  tbody.innerHTML = "";
+  let totalProduits = 0;
+
+  produits.forEach(p => {
+    const totalHT = p.prix * p.quantite;
+    const totalTTC = totalHT * (1 + p.tva / 100);
+    totalProduits += totalTTC;
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${p.nom}</td>
+      <td>${p.quantite}</td>
+      <td>${p.prix.toFixed(0)} FCFA</td>
+      <td>${p.tva}%</td>
+      <td>${totalTTC.toFixed(0)} FCFA</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  const totalMainHT = heures * tarifHoraire;
+  const totalMainTTC = totalMainHT * (1 + tvaMain / 100);
+  totalProduits += totalMainTTC;
+
+  const trMain = document.createElement("tr");
+  trMain.innerHTML = `
+    <td>Main-d’œuvre</td>
+    <td>${heures}</td>
+    <td>${tarifHoraire.toFixed(0)} FCFA</td>
+    <td>${tvaMain}%</td>
+    <td>${totalMainTTC.toFixed(0)} FCFA</td>
+  `;
+  tbody.appendChild(trMain);
+
+  document.getElementById("totalGlobal").textContent = `Total TTC : ${totalProduits.toFixed(0)} FCFA`;
+
+  // Historique
+  const historique = JSON.parse(localStorage.getItem("historiqueDevis") || "[]");
+  const numero = historique.length + 1;
+  historique.push({ numero, client, electricien, date, totalTTC: totalProduits.toFixed(0) });
+  localStorage.setItem("historiqueDevis", JSON.stringify(historique));
 }
+
+}
+

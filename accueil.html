@@ -3,45 +3,120 @@
 <head>
   <meta charset="UTF-8">
   <title>ÉlecProDevis – Accueil</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bleu: #0077cc;
+      --gris: #f0f4f8;
+      --blanc: #ffffff;
+      --ombre: rgba(0, 0, 0, 0.1);
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--gris);
+      font-family: 'Segoe UI', sans-serif;
+      color: #333;
+      animation: fadeIn 0.6s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: var(--blanc);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px var(--ombre);
+    }
+    h1 {
+      text-align: center;
+      color: var(--bleu);
+      margin-bottom: 30px;
+      font-size: 1.8em;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #444;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: border 0.3s;
+    }
+    input:focus {
+      border-color: var(--bleu);
+      outline: none;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: var(--bleu);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #666;
+    }
+  </style>
 </head>
 <body>
-  <h1>🏠 Générateur de devis universel</h1>
+  <div class="container">
+    <h1>🔧 Crée ton devis en 1 minute</h1>
 
-  <section>
-    <label>👤 Nom du client :
-      <input type="text" id="client">
-    </label>
-    <label>👨‍🔧 Nom du technicien :
-      <input type="text" id="electricien">
-    </label>
-    <label>📅 Date du devis :
-      <input type="date" id="date">
-    </label>
-    <label>🛠️ Heures de main-d’œuvre :
-      <input type="number" id="heures" placeholder="Ex : 3">
-    </label>
-    <label>💰 Tarif horaire (FCFA) :
-      <input type="number" id="tarifHoraire" placeholder="Ex : 5000">
-    </label>
-    <label>📈 TVA main-d’œuvre (%) :
-      <input type="number" id="tvaMain" value="20">
-    </label>
-    <button onclick="validerAccueil()">➡️ Continuer</button>
-  </section>
+    <label for="client">👤 Nom du client</label>
+    <input type="text" id="client" placeholder="Ex : M. Koffi">
+
+    <label for="electricien">👨‍🔧 Nom du technicien</label>
+    <input type="text" id="electricien" placeholder="Ex : Simplisso">
+
+    <label for="date">📅 Date du devis</label>
+    <input type="date" id="date">
+
+    <label for="heures">🛠️ Heures de main-d’œuvre</label>
+    <input type="number" id="heures" placeholder="Ex : 3">
+
+    <label for="tarifHoraire">💰 Tarif horaire (FCFA)</label>
+    <input type="number" id="tarifHoraire" placeholder="Ex : 5000">
+
+    <label for="tvaMain">📈 TVA main-d’œuvre (%)</label>
+    <input type="number" id="tvaMain" value="18">
+
+    <button onclick="validerAccueil()">➡️ Continuer vers les produits</button>
+
+    <div class="footer">ÉlecProDevis – Simplifie ta facturation technique</div>
+  </div>
 
   <script>
     function validerAccueil() {
       const client = document.getElementById("client").value.trim();
       const electricien = document.getElementById("electricien").value.trim();
       const date = document.getElementById("date").value;
-      const heures = document.getElementById("heures").value;
-      const tarifHoraire = document.getElementById("tarifHoraire").value;
-      const tvaMain = document.getElementById("tvaMain").value;
+      const heures = parseFloat(document.getElementById("heures").value);
+      const tarifHoraire = parseFloat(document.getElementById("tarifHoraire").value);
+      const tvaMain = parseFloat(document.getElementById("tvaMain").value);
 
-      if (!client || !electricien || !date || !heures || !tarifHoraire || !tvaMain) {
-        alert("Veuillez remplir tous les champs.");
+      if (!client || !electricien || !date || isNaN(heures) || isNaN(tarifHoraire) || isNaN(tvaMain)) {
+        alert("🛑 Remplis tous les champs correctement.");
         return;
       }
 
@@ -51,19 +126,9 @@
       localStorage.setItem("heures", heures);
       localStorage.setItem("tarifHoraire", tarifHoraire);
       localStorage.setItem("tvaMain", tvaMain);
-      localStorage.setItem("produits", "[]"); // reset produits
 
       window.location.href = "produits.html";
     }
   </script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(() => console.log("✅ Service Worker actif"))
-      .catch(err => console.error("❌ Erreur SW", err));
-  }
-</script>
-<script src="script.js"></script>
 </body>
 </html>
-

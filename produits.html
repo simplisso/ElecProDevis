@@ -156,10 +156,10 @@
       { nom: "Boîtier encastré", prix: 600, tva: 18, image: "images/boitier.png", categorie: "fixation" }
     ];
 
-    let produitsPerso = JSON.parse(localStorage.getItem("produitsPerso") || "[]");
-    let tousProduits = [...produitsStandards, ...produitsPerso];
-
     function afficherGrille() {
+      const produitsPerso = JSON.parse(localStorage.getItem("produitsPerso") || "[]");
+      const tousProduits = [...produitsStandards, ...produitsPerso];
+
       const grille = document.getElementById("grilleProduits");
       const recherche = document.getElementById("recherche").value.toLowerCase();
       const filtre = document.getElementById("filtreCategorie").value;
@@ -207,6 +207,7 @@
         categorie
       };
 
+            const produitsPerso = JSON.parse(localStorage.getItem("produitsPerso") || "[]");
       produitsPerso.push(nouveau);
       localStorage.setItem("produitsPerso", JSON.stringify(produitsPerso));
 
@@ -223,6 +224,29 @@
       afficherGrille();
       alert("✅ Produit ajouté avec succès !");
     }
+
+    function genererDevis() {
+      const catalogue = JSON.parse(localStorage.getItem("catalogueActif") || "[]");
+      const selection = [];
+
+      catalogue.forEach((p, index) => {
+        const qte = parseInt(document.getElementById("qte" + index)?.value || "0");
+        if (qte > 0) {
+          selection.push({ ...p, quantite: qte });
+        }
+      });
+
+      if (selection.length === 0) {
+        alert("🛑 Sélectionne au moins un produit.");
+        return;
+      }
+
+      localStorage.setItem("produits", JSON.stringify(selection));
+      window.location.href = "devis.html";
+    }
+
+    // Initialisation
+    afficherGrille();
   </script>
 </body>
 </html>

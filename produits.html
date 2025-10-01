@@ -87,6 +87,27 @@
     button:hover {
       background-color: #005fa3;
     }
+    .ajoutPerso {
+      max-width: 600px;
+      margin: 20px auto;
+      background: var(--blanc);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px var(--ombre);
+    }
+    .ajoutPerso h2 {
+      margin-top: 0;
+      color: var(--bleu);
+      text-align: center;
+    }
+    .ajoutPerso input, .ajoutPerso select {
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
   </style>
 </head>
 <body>
@@ -100,7 +121,24 @@
       <option value="protection">Protection</option>
       <option value="fixation">Fixation</option>
       <option value="distribution">Distribution</option>
+      <option value="autre">Autre</option>
     </select>
+  </div>
+
+  <div class="ajoutPerso">
+    <h2>➕ Ajouter un produit personnalisé</h2>
+    <input type="text" id="nomPerso" placeholder="Nom du produit">
+    <input type="number" id="prixPerso" placeholder="Prix HT (FCFA)">
+    <input type="number" id="tvaPerso" placeholder="TVA (%) - optionnel">
+    <select id="categoriePerso">
+      <option value="">Choisir une catégorie</option>
+      <option value="câblage">Câblage</option>
+      <option value="protection">Protection</option>
+      <option value="fixation">Fixation</option>
+      <option value="distribution">Distribution</option>
+      <option value="autre">Autre</option>
+    </select>
+    <button onclick="ajouterProduitPerso()">✅ Ajouter au catalogue</button>
   </div>
 
   <div class="grille" id="grilleProduits"></div>
@@ -118,8 +156,8 @@
       { nom: "Boîtier encastré", prix: 600, tva: 18, image: "images/boitier.png", categorie: "fixation" }
     ];
 
-    const produitsPerso = JSON.parse(localStorage.getItem("produitsPerso") || "[]");
-    const tousProduits = [...produitsStandards, ...produitsPerso];
+    let produitsPerso = JSON.parse(localStorage.getItem("produitsPerso") || "[]");
+    let tousProduits = [...produitsStandards, ...produitsPerso];
 
     function afficherGrille() {
       const grille = document.getElementById("grilleProduits");
@@ -138,7 +176,7 @@
         const div = document.createElement("div");
         div.className = "produit";
         div.innerHTML = `
-          <img src="${p.image}" alt="${p.nom}">
+          <img src="${p.image || 'images/custom.png'}" alt="${p.nom}">
           <span>${p.nom}</span>
           <label>Qté :
             <input type="number" id="qte${index}" min="0" value="0">
@@ -150,27 +188,41 @@
       localStorage.setItem("catalogueActif", JSON.stringify(filtrés));
     }
 
-    function genererDevis() {
-      const catalogue = JSON.parse(localStorage.getItem("catalogueActif") || "[]");
-      const selection = [];
+    function ajouterProduitPerso() {
+      const nom = document.getElementById("nomPerso").value.trim();
+      const prix = parseFloat(document.getElementById("prixPerso").value);
+      const tva = parseFloat(document.getElementById("tvaPerso").value);
+      const categorie = document.getElementById("categoriePerso").value;
 
-      catalogue.forEach((p, index) => {
-        const qte = parseInt(document.getElementById("qte" + index)?.value || "0");
-        if (qte > 0) {
-          selection.push({ ...p, quantite: qte });
-        }
-      });
-
-      if (selection.length === 0) {
-        alert("🛑 Sélectionne au moins un produit.");
+      if (!nom || isNaN(prix) || !categorie) {
+        alert("🛑 Remplis au moins le nom, le prix et la catégorie.");
         return;
       }
 
-      localStorage.setItem("produits", JSON.stringify(selection));
-      window.location.href = "devis.html";
-    }
+      const nouveau = {
+        nom,
+        prix,
+        tva: isNaN(tva) ? 0 : tva,
+        image: "images/custom.png",
+        categorie
+      };
 
-    afficherGrille();
+      produitsPerso.push(nouveau);
+      localStorage.setItem("produitsPerso", JSON.stringify(produitsPerso));
+
+      // Met à jour le catalogue complet
+      tousProduits = [...produitsStandards, ...produitsPerso];
+
+      // Réinitialise les champs
+      document.getElementById("nomPerso").value = "";
+      document.getElementById("prixPerso").value = "";
+      document.getElementById("tvaPerso").value = "";
+      document.getElementById("categoriePerso").value = "";
+
+      // Rafraîchit la grille
+      afficherGrille();
+      alert("✅ Produit ajouté avec succès !");
+    }
   </script>
 </body>
 </html>

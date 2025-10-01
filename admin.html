@@ -3,16 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <title>ÉlecProDevis – Historique</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bleu: #0077cc;
+      --gris: #f0f4f8;
+      --blanc: #ffffff;
+      --ombre: rgba(0, 0, 0, 0.1);
+    }
+    body {
+      margin: 0;
+      padding: 20px;
+      background: var(--gris);
+      font-family: 'Segoe UI', sans-serif;
+      color: #333;
+    }
+    .container {
+      max-width: 960px;
+      margin: auto;
+      background: var(--blanc);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px var(--ombre);
+    }
+    h1 {
+      text-align: center;
+      color: var(--bleu);
+      margin-bottom: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: left;
+      font-size: 0.95em;
+    }
+    th {
+      background-color: var(--bleu);
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f4f4f4;
+    }
+    .actions {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .actions button {
+      background-color: var(--bleu);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .actions button:hover {
+      background-color: #005fa3;
+    }
+  </style>
 </head>
 <body>
-  <h1>📁 Historique des devis</h1>
-
-  <section>
+  <div class="container">
+    <h1>📁 Historique des devis</h1>
     <table id="tableHistorique">
       <thead>
         <tr>
-          <th>Numéro</th>
+          <th>#</th>
           <th>Client</th>
           <th>Technicien</th>
           <th>Date</th>
@@ -21,21 +83,26 @@
       </thead>
       <tbody></tbody>
     </table>
-    <button onclick="exporterCSV()">📤 Exporter CSV</button>
-  </section>
+    <div class="actions">
+      <button onclick="exporterCSV()">📤 Exporter CSV</button>
+      <button onclick="window.location.href='accueil.html'">🔁 Nouveau devis</button>
+    </div>
+  </div>
 
   <script>
-    function afficherHistorique() {
+    function chargerHistorique() {
       const historique = JSON.parse(localStorage.getItem("historiqueDevis") || "[]");
       const tbody = document.querySelector("#tableHistorique tbody");
-      historique.forEach(d => {
+      tbody.innerHTML = "";
+
+      historique.forEach((devis, index) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${d.numero}</td>
-          <td>${d.client}</td>
-          <td>${d.electricien}</td>
-          <td>${d.date}</td>
-          <td>${d.totalTTC} FCFA</td>
+          <td>${index + 1}</td>
+          <td>${devis.client}</td>
+          <td>${devis.electricien}</td>
+          <td>${devis.date}</td>
+          <td>${devis.totalTTC} FCFA</td>
         `;
         tbody.appendChild(tr);
       });
@@ -43,19 +110,28 @@
 
     function exporterCSV() {
       const historique = JSON.parse(localStorage.getItem("historiqueDevis") || "[]");
+      if (historique.length === 0) {
+        alert("Aucun devis à exporter.");
+        return;
+      }
+
       let csv = "Numéro,Client,Technicien,Date,Total TTC\n";
-      historique.forEach(d => {
-        csv += `${d.numero},${d.client},${d.electricien},${d.date},${d.totalTTC} FCFA\n`;
+      historique.forEach((d, i) => {
+        csv += `${i + 1},"${d.client}","${d.electricien}","${d.date}",${d.totalTTC}\n`;
       });
-      const blob = new Blob([csv], { type: "text/csv" });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "historique_devis.csv";
-      a.click();
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "historique_devis.csv");
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
-    afficherHistorique();
+    chargerHistorique();
   </script>
 </body>
 </html>

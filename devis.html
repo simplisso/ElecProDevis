@@ -117,6 +117,8 @@
 
     <div class="actions">
       <button onclick="window.print()">🖨️ Imprimer</button>
+      <button onclick="telechargerPDF()">📥 Télécharger PDF</button>
+      <button onclick="envoyerWhatsApp()">📲 Envoyer par WhatsApp</button>
       <button onclick="window.location.href='accueil.html'">🔁 Nouveau devis</button>
     </div>
   </div>
@@ -174,6 +176,32 @@
 
     const totalGlobal = totalProduits + mainTTC;
     document.getElementById("totalGlobal").innerHTML = `💰 Total TTC global : <strong>${totalGlobal.toFixed(0)} FCFA</strong>`;
+
+    function telechargerPDF() {
+      const contenu = document.querySelector(".container").cloneNode(true);
+      contenu.querySelector(".actions")?.remove();
+
+      const fenetre = window.open("", "_blank");
+      fenetre.document.write(`
+        <html><head><title>Devis PDF</title>
+        <style>
+          body { font-family: 'Segoe UI', sans-serif; padding: 20px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+          th, td { border: 1px solid #ccc; padding: 8px; }
+          th { background: #0077cc; color: white; }
+          .total { text-align: right; font-weight: bold; margin-top: 20px; }
+        </style></head><body>${contenu.innerHTML}</body></html>
+      `);
+      fenetre.document.close();
+      fenetre.print();
+    }
+
+    function envoyerWhatsApp() {
+      const total = document.getElementById("totalGlobal").textContent || "";
+      const message = `Bonjour ${client}, voici votre devis : ${total}.`;
+      const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+      window.open(url, "_blank");
+    }
   </script>
 </body>
 </html>

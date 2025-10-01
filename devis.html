@@ -14,7 +14,7 @@
       color: #333;
     }
     .container {
-      max-width: 900px;
+      max-width: 960px;
       margin: auto;
       background: white;
       padding: 30px;
@@ -31,25 +31,31 @@
       flex-wrap: wrap;
       justify-content: space-between;
       margin-bottom: 30px;
+      gap: 10px;
     }
     .entete div {
       flex: 1 1 45%;
-      margin-bottom: 10px;
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 8px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 10px;
+      padding: 12px;
       text-align: left;
       font-size: 0.95em;
     }
     th {
       background-color: #0077cc;
       color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f4f4f4;
     }
     .total {
       text-align: right;
@@ -63,6 +69,7 @@
       flex-wrap: wrap;
       gap: 10px;
       justify-content: center;
+      margin-top: 30px;
     }
     .actions button {
       background-color: #0077cc;
@@ -79,16 +86,9 @@
     }
 
     @media print {
-      .actions {
-        display: none;
-      }
-      body {
-        background: white;
-      }
-      .container {
-        box-shadow: none;
-        padding: 0;
-      }
+      .actions { display: none; }
+      body { background: white; }
+      .container { box-shadow: none; padding: 0; }
     }
   </style>
 </head>
@@ -125,7 +125,7 @@
 
   <script src="script.js"></script>
   <script>
-    calculerDevis(); // Cette fonction doit injecter les données dans #enteteDevis, #tableDevis et #totalGlobal
+    calculerDevis(); // Injecte les données dans #enteteDevis, #tableDevis et #totalGlobal
   </script>
 </body>
 </html>

@@ -3,88 +3,171 @@
 <head>
   <meta charset="UTF-8">
   <title>ÉlecProDevis – Produits</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bleu: #0077cc;
+      --gris: #f0f4f8;
+      --blanc: #ffffff;
+      --ombre: rgba(0, 0, 0, 0.1);
+    }
+    body {
+      margin: 0;
+      padding: 20px;
+      background: var(--gris);
+      font-family: 'Segoe UI', sans-serif;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: var(--bleu);
+      margin-bottom: 20px;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .controls input, .controls select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      min-width: 160px;
+    }
+    .grille {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .produit {
+      background: var(--blanc);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px var(--ombre);
+      padding: 16px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .produit:hover {
+      transform: scale(1.03);
+    }
+    .produit img {
+      max-width: 80px;
+      margin-bottom: 10px;
+    }
+    .produit span {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .produit input {
+      width: 60px;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      text-align: center;
+    }
+    button {
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto;
+      padding: 14px;
+      background-color: var(--bleu);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+  </style>
 </head>
 <body>
-  <h1>📦 Sélection des produits</h1>
+  <h1>📦 Sélectionne tes équipements</h1>
 
-  <section>
-    <div class="grille" id="grilleProduits"></div>
-  </section>
+  <div class="controls">
+    <input type="text" id="recherche" placeholder="🔍 Rechercher un produit..." oninput="afficherGrille()">
+    <select id="filtreCategorie" onchange="afficherGrille()">
+      <option value="">Toutes les catégories</option>
+      <option value="câblage">Câblage</option>
+      <option value="protection">Protection</option>
+      <option value="fixation">Fixation</option>
+      <option value="distribution">Distribution</option>
+    </select>
+  </div>
 
-  <section>
-    <h3>➕ Ajouter un produit manuel</h3>
-    <label>Nom :
-      <input type="text" id="nomManuel">
-    </label>
-    <label>Prix unitaire HT :
-      <input type="number" id="prixManuel">
-    </label>
-    <label>TVA (%) :
-      <input type="number" id="tvaManuel" value="20">
-    </label>
-    <button onclick="ajouterManuel()">Ajouter</button>
-  </section>
-
+  <div class="grille" id="grilleProduits"></div>
   <button onclick="genererDevis()">➡️ Générer le devis</button>
 
-  <script src="script.js"></script>
   <script>
-    const produits = [
-      { nom: "Piquet de terre", prix: 1500, tva: 18, image: "images/piquet.png" },
-      { nom: "Boîte de dérivation", prix: 800, tva: 18, image: "images/boite.png" },
-      { nom: "Câble 3G2.5", prix: 1200, tva: 18, image: "images/cable.png" },
-      { nom: "Gaine ICTA", prix: 500, tva: 18, image: "images/gaine.png" },
-      { nom: "Tableau électrique", prix: 7500, tva: 18, image: "images/tableau.png" },
-      { nom: "Disjoncteur 16A", prix: 1800, tva: 18, image: "images/disjoncteur.png" },
-      { nom: "Prise murale", prix: 1000, tva: 18, image: "images/prise.png" },
-      { nom: "Boîtier encastré", prix: 600, tva: 18, image: "images/boitier.png" }
+    const produitsStandards = [
+      { nom: "Piquet de terre", prix: 1500, tva: 18, image: "images/piquet.png", categorie: "protection" },
+      { nom: "Boîte de dérivation", prix: 800, tva: 18, image: "images/boite.png", categorie: "distribution" },
+      { nom: "Câble 3G2.5", prix: 1200, tva: 18, image: "images/cable.png", categorie: "câblage" },
+      { nom: "Gaine ICTA", prix: 500, tva: 18, image: "images/gaine.png", categorie: "câblage" },
+      { nom: "Tableau électrique", prix: 7500, tva: 18, image: "images/tableau.png", categorie: "distribution" },
+      { nom: "Disjoncteur 16A", prix: 1800, tva: 18, image: "images/disjoncteur.png", categorie: "protection" },
+      { nom: "Prise murale", prix: 1000, tva: 18, image: "images/prise.png", categorie: "distribution" },
+      { nom: "Boîtier encastré", prix: 600, tva: 18, image: "images/boitier.png", categorie: "fixation" }
     ];
 
-    const selection = [];
+    const produitsPerso = JSON.parse(localStorage.getItem("produitsPerso") || "[]");
+    const tousProduits = [...produitsStandards, ...produitsPerso];
 
     function afficherGrille() {
       const grille = document.getElementById("grilleProduits");
-      produits.forEach((p, index) => {
+      const recherche = document.getElementById("recherche").value.toLowerCase();
+      const filtre = document.getElementById("filtreCategorie").value;
+
+      grille.innerHTML = "";
+
+      const filtrés = tousProduits.filter(p => {
+        const matchNom = p.nom.toLowerCase().includes(recherche);
+        const matchCat = filtre === "" || p.categorie === filtre;
+        return matchNom && matchCat;
+      });
+
+      filtrés.forEach((p, index) => {
         const div = document.createElement("div");
         div.className = "produit";
         div.innerHTML = `
           <img src="${p.image}" alt="${p.nom}">
           <span>${p.nom}</span>
-          <label>Quantité :
+          <label>Qté :
             <input type="number" id="qte${index}" min="0" value="0">
           </label>
         `;
         grille.appendChild(div);
       });
-    }
 
-    function ajouterManuel() {
-      const nom = document.getElementById("nomManuel").value.trim();
-      const prix = parseFloat(document.getElementById("prixManuel").value);
-      const tva = parseFloat(document.getElementById("tvaManuel").value);
-      if (!nom || isNaN(prix) || isNaN(tva)) {
-        alert("Remplis tous les champs du produit manuel.");
-        return;
-      }
-      selection.push({ nom, prix, tva, quantite: 1 });
-      alert("✅ Produit manuel ajouté !");
+      localStorage.setItem("catalogueActif", JSON.stringify(filtrés));
     }
 
     function genererDevis() {
-      produits.forEach((p, index) => {
-        const qte = parseInt(document.getElementById("qte" + index).value);
+      const catalogue = JSON.parse(localStorage.getItem("catalogueActif") || "[]");
+      const selection = [];
+
+      catalogue.forEach((p, index) => {
+        const qte = parseInt(document.getElementById("qte" + index)?.value || "0");
         if (qte > 0) {
           selection.push({ ...p, quantite: qte });
         }
       });
+
       if (selection.length === 0) {
-        alert("Ajoute au moins un produit.");
+        alert("🛑 Sélectionne au moins un produit.");
         return;
       }
+
       localStorage.setItem("produits", JSON.stringify(selection));
-      const paiementValide = localStorage.getItem("paiementValide") === "true";
-      window.location.href = paiementValide ? "personnalisation.html" : "paiement.html";
+      window.location.href = "devis.html";
     }
 
     afficherGrille();

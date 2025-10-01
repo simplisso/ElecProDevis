@@ -4,40 +4,60 @@
   <meta charset="UTF-8">
   <title>ÉlecProDevis – Bienvenue</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0077cc">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ÉlecProDevis">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
   <style>
     :root {
       --bleu: #0077cc;
-      --clair: #e6f0ff;
-      --blanc: #ffffff;
-      --ombre: rgba(0, 0, 0, 0.1);
+      --ombre: rgba(0, 0, 0, 0.3);
     }
-    body {
+    body, html {
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, var(--clair), var(--blanc));
+      height: 100%;
       font-family: 'Segoe UI', sans-serif;
-      color: #333;
-      overflow-x: hidden;
+      overflow: hidden;
     }
-    .container {
-      height: 100vh;
+    video.bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      filter: brightness(0.6);
+    }
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(2px);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
+      color: white;
       animation: fadeIn 1.2s ease-out;
     }
     h1 {
-      font-size: 2.8em;
-      color: var(--bleu);
+      font-size: 3em;
       margin-bottom: 10px;
+      color: #fff;
+      text-shadow: 0 2px 6px var(--ombre);
       animation: slideDown 1s ease-out;
     }
     p {
       font-size: 1.2em;
-      color: #555;
       margin-bottom: 40px;
+      text-shadow: 0 1px 4px var(--ombre);
       animation: fadeIn 2s ease-out;
     }
     button {
@@ -57,6 +77,15 @@
       background-color: #005fa3;
       transform: scale(1.05);
     }
+    .footer {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9em;
+      color: #ddd;
+      text-shadow: 0 1px 4px var(--ombre);
+    }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -70,23 +99,19 @@
       60% { transform: scale(1.1); opacity: 1; }
       100% { transform: scale(1); }
     }
-    .footer {
-      position: absolute;
-      bottom: 20px;
-      width: 100%;
-      text-align: center;
-      font-size: 0.9em;
-      color: #777;
-      animation: fadeIn 2.5s ease-out;
-    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <video autoplay muted loop class="bg-video">
+    <source src="videos/electricite.mp4" type="video/mp4">
+    Votre navigateur ne supporte pas la vidéo.
+  </video>
+
+  <div class="overlay">
     <h1>🔧 ÉlecProDevis</h1>
     <p>Crée des devis techniques en quelques clics, avec clarté et professionnalisme.</p>
     <button onclick="window.location.href='accueil.html'">🚀 Commencer un devis</button>
+    <div class="footer">© 2025 – Simplisso | Application modulaire de devis universel</div>
   </div>
-  <div class="footer">© 2025 – Simplisso | Application modulaire de devis universel</div>
 </body>
 </html>

@@ -2,136 +2,112 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>ÉlecProDevis – Historique</title>
+  <title>ÉlecProDevis – Administration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0077cc">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ÉlecProDevis">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
   <style>
-    :root {
-      --bleu: #0077cc;
-      --gris: #f0f4f8;
-      --blanc: #ffffff;
-      --ombre: rgba(0, 0, 0, 0.1);
-    }
     body {
       margin: 0;
-      padding: 20px;
-      background: var(--gris);
-      font-family: 'Segoe UI', sans-serif;
-      color: #333;
-    }
-    .container {
-      max-width: 960px;
-      margin: auto;
-      background: var(--blanc);
       padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px var(--ombre);
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      color: #333;
     }
     h1 {
       text-align: center;
-      color: var(--bleu);
+      color: #0077cc;
       margin-bottom: 30px;
     }
-    table {
+    .bloc {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    input, select {
       width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-    th, td {
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 8px;
       border: 1px solid #ccc;
-      padding: 12px;
-      text-align: left;
-      font-size: 0.95em;
+      font-size: 1em;
     }
-    th {
-      background-color: var(--bleu);
-      color: white;
-    }
-    tr:nth-child(even) {
-      background-color: #f4f4f4;
-    }
-    .actions {
-      text-align: center;
+    .switch {
+      display: flex;
+      align-items: center;
       margin-top: 20px;
     }
-    .actions button {
-      background-color: var(--bleu);
+    .switch input {
+      margin-right: 10px;
+    }
+    button {
+      margin-top: 30px;
+      width: 100%;
+      padding: 14px;
+      background-color: #0077cc;
       color: white;
       border: none;
-      padding: 12px 20px;
-      font-size: 1em;
-      border-radius: 8px;
+      border-radius: 10px;
+      font-size: 1.1em;
+      font-weight: bold;
       cursor: pointer;
-      margin: 5px;
     }
-    .actions button:hover {
+    button:hover {
       background-color: #005fa3;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>📁 Historique des devis</h1>
-    <table id="tableHistorique">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Client</th>
-          <th>Technicien</th>
-          <th>Date</th>
-          <th>Total TTC</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <div class="actions">
-      <button onclick="exporterCSV()">📤 Exporter CSV</button>
-      <button onclick="window.location.href='accueil.html'">🔁 Nouveau devis</button>
+  <h1>🔐 Administration</h1>
+  <div class="bloc">
+    <label for="motDePasse">Mot de passe administrateur :</label>
+    <input type="password" id="motDePasse" placeholder="••••••••">
+
+    <div class="switch">
+      <input type="checkbox" id="modePremium">
+      <label for="modePremium">Activer le mode premium</label>
     </div>
+
+    <label for="tarifDefaut">Tarif horaire par défaut (FCFA) :</label>
+    <input type="number" id="tarifDefaut" placeholder="Ex : 5000">
+
+    <label for="tvaDefaut">TVA par défaut (%) :</label>
+    <input type="number" id="tvaDefaut" placeholder="Ex : 18">
+
+    <button onclick="enregistrerAdmin()">✅ Enregistrer les paramètres</button>
   </div>
 
   <script>
-    function chargerHistorique() {
-      const historique = JSON.parse(localStorage.getItem("historiqueDevis") || "[]");
-      const tbody = document.querySelector("#tableHistorique tbody");
-      tbody.innerHTML = "";
+    function enregistrerAdmin() {
+      const mdp = document.getElementById("motDePasse").value.trim();
+      const premium = document.getElementById("modePremium").checked;
+      const tarif = parseFloat(document.getElementById("tarifDefaut").value);
+      const tva = parseFloat(document.getElementById("tvaDefaut").value);
 
-      historique.forEach((devis, index) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${index + 1}</td>
-          <td>${devis.client}</td>
-          <td>${devis.electricien}</td>
-          <td>${devis.date}</td>
-          <td>${devis.totalTTC} FCFA</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function exporterCSV() {
-      const historique = JSON.parse(localStorage.getItem("historiqueDevis") || "[]");
-      if (historique.length === 0) {
-        alert("Aucun devis à exporter.");
+      if (!mdp) {
+        alert("🛑 Mot de passe requis.");
         return;
       }
 
-      let csv = "Numéro,Client,Technicien,Date,Total TTC\n";
-      historique.forEach((d, i) => {
-        csv += `${i + 1},"${d.client}","${d.electricien}","${d.date}",${d.totalTTC}\n`;
-      });
+      localStorage.setItem("adminMdp", mdp);
+      localStorage.setItem("modePremium", premium);
+      if (!isNaN(tarif)) localStorage.setItem("tarifDefaut", tarif);
+      if (!isNaN(tva)) localStorage.setItem("tvaDefaut", tva);
 
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", "historique_devis.csv");
-      link.style.display = "none";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      alert("✅ Paramètres enregistrés.");
     }
-
-    chargerHistorique();
   </script>
 </body>
 </html>

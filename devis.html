@@ -2,132 +2,107 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>ÉlecProDevis – Devis</title>
+  <title>ÉlecProDevis – Devis final</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0077cc">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ÉlecProDevis">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
   <style>
-    :root {
-      --bleu: #0077cc;
-      --gris: #f0f4f8;
-      --blanc: #ffffff;
-      --ombre: rgba(0, 0, 0, 0.1);
-    }
     body {
       margin: 0;
-      padding: 20px;
-      background: var(--gris);
-      font-family: 'Segoe UI', sans-serif;
-      color: #333;
-    }
-    .container {
-      max-width: 960px;
-      margin: auto;
-      background: var(--blanc);
       padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px var(--ombre);
+      font-family: 'Segoe UI', sans-serif;
+      background: #f9f9f9;
+      color: #333;
     }
     h1 {
       text-align: center;
-      color: var(--bleu);
-      margin-bottom: 30px;
+      color: #0077cc;
+      margin-bottom: 20px;
     }
-    .infos {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      margin-bottom: 30px;
-    }
-    .infos div {
-      flex: 1;
-      min-width: 200px;
-      margin-bottom: 10px;
+    .bloc {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 30px;
+      margin-top: 20px;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 12px;
+      padding: 10px;
       text-align: left;
-      font-size: 0.95em;
     }
     th {
-      background-color: var(--bleu);
+      background-color: #0077cc;
       color: white;
-    }
-    tr:nth-child(even) {
-      background-color: #f4f4f4;
     }
     .total {
       text-align: right;
       font-size: 1.2em;
-      font-weight: bold;
       margin-top: 20px;
     }
     .actions {
-      text-align: center;
       margin-top: 30px;
+      text-align: center;
     }
     .actions button {
-      background-color: var(--bleu);
-      color: white;
-      border: none;
+      margin: 10px;
       padding: 12px 20px;
       font-size: 1em;
-      border-radius: 8px;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 10px;
       cursor: pointer;
-      margin: 5px;
     }
     .actions button:hover {
       background-color: #005fa3;
     }
-    @media print {
-      .actions {
-        display: none;
-      }
-    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>📄 Devis généré</h1>
-    <div class="infos">
-      <div><strong>👤 Client :</strong> <span id="client"></span></div>
-      <div><strong>👨‍🔧 Technicien :</strong> <span id="electricien"></span></div>
-      <div><strong>📅 Date :</strong> <span id="date"></span></div>
-    </div>
+  <h1>🧾 Devis final</h1>
+  <div class="bloc" id="contenuDevis">
+    <p><strong>Client :</strong> <span id="client"></span></p>
+    <p><strong>Technicien :</strong> <span id="electricien"></span></p>
+    <p><strong>Date :</strong> <span id="date"></span></p>
 
-    <table id="tableProduits">
+    <table>
       <thead>
         <tr>
           <th>Produit</th>
-          <th>Qté</th>
-          <th>PU HT</th>
+          <th>Quantité</th>
+          <th>Prix HT</th>
           <th>TVA</th>
           <th>Total TTC</th>
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody id="tableProduits"></tbody>
     </table>
 
     <div class="total" id="mainOeuvre"></div>
-    <div class="total" id="totalGlobal"></div>
+    <div class="total"><strong>Total général TTC :</strong> <span id="totalFinal"></span> FCFA</div>
+  </div>
 
-    <div class="actions">
-      <button onclick="window.print()">🖨️ Imprimer</button>
-      <button onclick="telechargerPDF()">📥 Télécharger PDF</button>
-      <button onclick="envoyerWhatsApp()">📲 Envoyer par WhatsApp</button>
-      <button onclick="window.location.href='index.html'">🔁 Nouveau devis</button>
-    </div>
+  <div class="actions">
+    <button onclick="telechargerPDF()">📥 Télécharger PDF</button>
+    <button onclick="envoyerWhatsApp()">📲 Envoyer par WhatsApp</button>
   </div>
 
   <script>
-    const client = localStorage.getItem("client") || "";
-    const electricien = localStorage.getItem("electricien") || "";
-    const date = localStorage.getItem("date") || "";
-    const modeMain = localStorage.getItem("modeMain") || "auto";
+    const client = localStorage.getItem("client");
+    const electricien = localStorage.getItem("electricien");
+    const date = localStorage.getItem("date");
+    const modeMain = localStorage.getItem("modeMain");
     const produits = JSON.parse(localStorage.getItem("produits") || "[]");
 
     document.getElementById("client").textContent = client;
@@ -135,74 +110,65 @@
     document.getElementById("date").textContent = date;
 
     let totalProduits = 0;
-    const tbody = document.querySelector("#tableProduits tbody");
+    const tbody = document.getElementById("tableProduits");
 
     produits.forEach(p => {
       const totalHT = p.prix * p.quantite;
-      const montantTVA = totalHT * (p.tva || 0) / 100;
+      const montantTVA = totalHT * (p.tva / 100);
       const totalTTC = totalHT + montantTVA;
       totalProduits += totalTTC;
 
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
+      const row = document.createElement("tr");
+      row.innerHTML = `
         <td>${p.nom}</td>
         <td>${p.quantite}</td>
         <td>${p.prix} FCFA</td>
-        <td>${p.tva || 0}%</td>
+        <td>${p.tva}%</td>
         <td>${totalTTC.toFixed(0)} FCFA</td>
       `;
-      tbody.appendChild(tr);
+      tbody.appendChild(row);
     });
 
-    let mainTTC = 0;
-    let texteMain = "";
-
+    let totalMain = 0;
     if (modeMain === "auto") {
-      const heures = parseFloat(localStorage.getItem("heures") || "0");
-      const tarif = parseFloat(localStorage.getItem("tarifHoraire") || "0");
-      const tva = parseFloat(localStorage.getItem("tvaMain") || "0");
-
-      const totalHT = heures * tarif;
-      const montantTVA = totalHT * tva / 100;
-      mainTTC = totalHT + montantTVA;
-
-      texteMain = `🛠️ Main-d’œuvre : ${heures}h × ${tarif} FCFA + ${tva}% = <strong>${mainTTC.toFixed(0)} FCFA TTC</strong>`;
+      const heures = parseFloat(localStorage.getItem("heures"));
+      const tarif = parseFloat(localStorage.getItem("tarifHoraire"));
+      const tva = parseFloat(localStorage.getItem("tvaMain"));
+      const ht = heures * tarif;
+      const ttc = ht + (ht * tva / 100);
+      totalMain = ttc;
+      document.getElementById("mainOeuvre").innerHTML = `<strong>Main-d’œuvre :</strong> ${ttc.toFixed(0)} FCFA`;
     } else {
-      mainTTC = parseFloat(localStorage.getItem("mainManuelle") || "0");
-      texteMain = `🛠️ Main-d’œuvre (manuel) : <strong>${mainTTC.toFixed(0)} FCFA TTC</strong>`;
+      totalMain = parseFloat(localStorage.getItem("mainManuelle"));
+      document.getElementById("mainOeuvre").innerHTML = `<strong>Main-d’œuvre :</strong> ${totalMain.toFixed(0)} FCFA`;
     }
 
-    document.getElementById("mainOeuvre").innerHTML = texteMain;
-
-    const totalGlobal = totalProduits + mainTTC;
-    document.getElementById("totalGlobal").innerHTML = `💰 Total TTC global : <strong>${totalGlobal.toFixed(0)} FCFA</strong>`;
+    const totalFinal = totalProduits + totalMain;
+    document.getElementById("totalFinal").textContent = totalFinal.toFixed(0);
 
     function telechargerPDF() {
-      const contenu = document.querySelector(".container").cloneNode(true);
-      contenu.querySelector(".actions")?.remove();
-
+      const contenu = document.getElementById("contenuDevis").cloneNode(true);
       const fenetre = window.open("", "_blank");
       fenetre.document.write(`
         <html><head><title>Devis PDF</title>
         <style>
           body { font-family: 'Segoe UI', sans-serif; padding: 20px; }
           table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-          th, td { border: 1px solid #ccc; padding: 8px; }
-          th { background: #0077cc; color: white; }
-          .total { text-align: right; font-weight: bold; margin-top: 20px; }
-        </style></head><body>${contenu.innerHTML}</body></html>
+          th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+          th { background-color: #0077cc; color: white; }
+        </style></head><body>
+        <h2>Devis client</h2>${contenu.innerHTML}</body></html>
       `);
       fenetre.document.close();
       fenetre.print();
     }
 
     function envoyerWhatsApp() {
-      const total = document.getElementById("totalGlobal").textContent || "";
-      const message = `Bonjour ${client}, voici votre devis : ${total}.`;
+      const noms = produits.map(p => `${p.nom} (${p.quantite})`).join(", ");
+      const message = `Devis pour ${client} – Produits : ${noms} – Main-d’œuvre : ${totalMain.toFixed(0)} FCFA – Total TTC : ${totalFinal.toFixed(0)} FCFA`;
       const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
       window.open(url, "_blank");
     }
   </script>
 </body>
 </html>
-

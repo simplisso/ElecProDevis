@@ -1,74 +1,5 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>ÉlecProDevis – Devis final</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0077cc">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="ÉlecProDevis">
-  <link rel="apple-touch-icon" href="images/icon-192.png">
-  <style>
-    body {
-      margin: 0;
-      padding: 30px;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f9f9f9;
-      color: #333;
-    }
-    h1 {
-      text-align: center;
-      color: #0077cc;
-      margin-bottom: 20px;
-    }
-    .bloc {
-      max-width: 800px;
-      margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background-color: #0077cc;
-      color: white;
-    }
-    .total {
-      text-align: right;
-      font-size: 1.2em;
-      margin-top: 20px;
-    }
-    .actions {
-      margin-top: 30px;
-      text-align: center;
-    }
-    .actions button {
-      margin: 10px;
-      padding: 12px 20px;
-      font-size: 1em;
-      background-color: #0077cc;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    .actions button:hover {
-      background-color: #005fa3;
-    }
-  </style>
-</head>
+<!-- ... HEAD inchangé ... -->
+
 <body>
   <h1>🧾 Devis final</h1>
   <div class="bloc" id="contenuDevis">
@@ -80,6 +11,7 @@
       <thead>
         <tr>
           <th>Produit</th>
+          <th>Type</th>
           <th>Quantité</th>
           <th>Prix HT</th>
           <th>TVA</th>
@@ -121,6 +53,7 @@
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${p.nom}</td>
+        <td>${p.type || "-"}</td>
         <td>${p.quantite}</td>
         <td>${p.prix} FCFA</td>
         <td>${p.tva}%</td>
@@ -164,11 +97,10 @@
     }
 
     function envoyerWhatsApp() {
-      const noms = produits.map(p => `${p.nom} (${p.quantite})`).join(", ");
+      const noms = produits.map(p => `${p.nom} (${p.quantite} × ${p.type || "-"})`).join(", ");
       const message = `Devis pour ${client} – Produits : ${noms} – Main-d’œuvre : ${totalMain.toFixed(0)} FCFA – Total TTC : ${totalFinal.toFixed(0)} FCFA`;
       const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
       window.open(url, "_blank");
     }
   </script>
 </body>
-</html>

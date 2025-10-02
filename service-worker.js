@@ -1,27 +1,17 @@
-const CACHE_NAME = 'elecprodevis-cache-v1';
+const CACHE_NAME = "elecprodevis-cache-v1";
 const urlsToCache = [
-  'index.html',
-  'accueil.html',
-  'produits.html',
-  'devis.html',
-  'paiement.html',
-  'personnalisation.html',
-  'admin.html',
-  'debug.html',
-  'style.css',
-  'script.js',
-  'manifest.json',
-  'images/piquet.png',
-  'images/boite.png',
-  'images/cable.png',
-  'images/gaine.png',
-  'images/tableau.png',
-  'images/disjoncteur.png',
-  'images/prise.png',
-  'images/boitier.png'
+  "index.html",
+  "accueil.html",
+  "produits.html",
+  "devis.html",
+  "manifest.json",
+  "images/icon-192.png",
+  "images/icon-512.png",
+  "videos/electricite.mp4"
 ];
 
-self.addEventListener('install', event => {
+// Installation du service worker
+self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(urlsToCache);
@@ -29,7 +19,23 @@ self.addEventListener('install', event => {
   );
 });
 
-self.addEventListener('fetch', event => {
+// Activation et nettoyage des anciens caches
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.map(key => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
+      )
+    )
+  );
+});
+
+// Interception des requêtes
+self.addEventListener("fetch", event => {
   event.respondWith(
     caches.match(event.request).then(response => {
       return response || fetch(event.request);

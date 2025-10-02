@@ -4,56 +4,45 @@
   <meta charset="UTF-8">
   <title>ÉlecProDevis – Accueil</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0077cc">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ÉlecProDevis">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
   <style>
-    :root {
-      --bleu: #0077cc;
-      --gris: #f0f4f8;
-      --blanc: #ffffff;
-      --ombre: rgba(0, 0, 0, 0.1);
-    }
     body {
       margin: 0;
-      padding: 20px;
-      background: var(--gris);
-      font-family: 'Segoe UI', sans-serif;
-      color: #333;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: var(--blanc);
       padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px var(--ombre);
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      color: #333;
     }
     h1 {
       text-align: center;
-      color: var(--bleu);
+      color: #0077cc;
       margin-bottom: 30px;
     }
-    label {
-      display: block;
-      margin-bottom: 10px;
-      font-weight: 600;
-      color: #444;
+    .formulaire {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
     }
     input, select {
       width: 100%;
       padding: 12px;
       margin-bottom: 20px;
-      border: 1px solid #ccc;
       border-radius: 8px;
+      border: 1px solid #ccc;
       font-size: 1em;
-      transition: border 0.3s;
-    }
-    input:focus, select:focus {
-      border-color: var(--bleu);
-      outline: none;
     }
     button {
       width: 100%;
       padding: 14px;
-      background-color: var(--bleu);
+      background-color: #0077cc;
       color: white;
       border: none;
       border-radius: 10px;
@@ -64,68 +53,47 @@
     button:hover {
       background-color: #005fa3;
     }
-    .footer {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 0.9em;
-      color: #666;
-    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🔧 Crée ton devis en 1 minute</h1>
-
-    <label for="client">👤 Nom du client</label>
-    <input type="text" id="client" placeholder="Ex : M. Koffi">
-
-    <label for="electricien">👨‍🔧 Nom du technicien</label>
-    <input type="text" id="electricien" placeholder="Ex : Simplisso">
-
-    <label for="date">📅 Date du devis</label>
+  <h1>🔧 Démarrer un nouveau devis</h1>
+  <div class="formulaire">
+    <input type="text" id="client" placeholder="Nom du client">
+    <input type="text" id="electricien" placeholder="Nom du technicien">
     <input type="date" id="date">
-
-    <label for="modeMain">🛠️ Format de main-d’œuvre</label>
-    <select id="modeMain" onchange="toggleMainOeuvre()">
-      <option value="auto">Automatique (heures × tarif)</option>
-      <option value="manuel">Manuel (montant TTC)</option>
+    <select id="modeMain" onchange="toggleBloc()">
+      <option value="auto">Main-d’œuvre automatique (heures × tarif)</option>
+      <option value="manuel">Main-d’œuvre manuelle (montant TTC)</option>
     </select>
 
     <div id="blocAuto">
-      <label for="heures">Heures de main-d’œuvre</label>
-      <input type="number" id="heures" placeholder="Ex : 3">
-
-      <label for="tarifHoraire">Tarif horaire (FCFA)</label>
-      <input type="number" id="tarifHoraire" placeholder="Ex : 5000">
-
-      <label for="tvaMain">TVA main-d’œuvre (%)</label>
-      <input type="number" id="tvaMain" value="18">
+      <input type="number" id="heures" placeholder="Nombre d'heures">
+      <input type="number" id="tarifHoraire" placeholder="Tarif horaire (FCFA)">
+      <input type="number" id="tvaMain" placeholder="TVA (%)">
     </div>
 
     <div id="blocManuel" style="display:none;">
-      <label for="mainManuelle">Montant TTC main-d’œuvre</label>
-      <input type="number" id="mainManuelle" placeholder="Ex : 15000">
+      <input type="number" id="mainManuelle" placeholder="Montant TTC main-d’œuvre">
     </div>
 
-    <button onclick="validerAccueil()">➡️ Continuer vers les produits</button>
-    <div class="footer">ÉlecProDevis – Simplifie ta facturation technique</div>
+    <button onclick="valider()">➡️ Continuer</button>
   </div>
 
   <script>
-    function toggleMainOeuvre() {
+    function toggleBloc() {
       const mode = document.getElementById("modeMain").value;
       document.getElementById("blocAuto").style.display = mode === "auto" ? "block" : "none";
       document.getElementById("blocManuel").style.display = mode === "manuel" ? "block" : "none";
     }
 
-    function validerAccueil() {
+    function valider() {
       const client = document.getElementById("client").value.trim();
       const electricien = document.getElementById("electricien").value.trim();
       const date = document.getElementById("date").value;
       const modeMain = document.getElementById("modeMain").value;
 
       if (!client || !electricien || !date) {
-        alert("🛑 Remplis les champs client, technicien et date.");
+        alert("🛑 Remplis tous les champs.");
         return;
       }
 
@@ -136,24 +104,24 @@
 
       if (modeMain === "auto") {
         const heures = parseFloat(document.getElementById("heures").value);
-        const tarifHoraire = parseFloat(document.getElementById("tarifHoraire").value);
-        const tvaMain = parseFloat(document.getElementById("tvaMain").value);
+        const tarif = parseFloat(document.getElementById("tarifHoraire").value);
+        const tva = parseFloat(document.getElementById("tvaMain").value);
 
-        if (isNaN(heures) || isNaN(tarifHoraire) || isNaN(tvaMain)) {
+        if (isNaN(heures) || isNaN(tarif) || isNaN(tva)) {
           alert("🛑 Remplis tous les champs de main-d’œuvre automatique.");
           return;
         }
 
         localStorage.setItem("heures", heures);
-        localStorage.setItem("tarifHoraire", tarifHoraire);
-        localStorage.setItem("tvaMain", tvaMain);
+        localStorage.setItem("tarifHoraire", tarif);
+        localStorage.setItem("tvaMain", tva);
       } else {
-        const montantManuel = parseFloat(document.getElementById("mainManuelle").value);
-        if (isNaN(montantManuel)) {
-          alert("🛑 Saisis le montant TTC de la main-d’œuvre.");
+        const montant = parseFloat(document.getElementById("mainManuelle").value);
+        if (isNaN(montant)) {
+          alert("🛑 Remplis le montant TTC de la main-d’œuvre.");
           return;
         }
-        localStorage.setItem("mainManuelle", montantManuel);
+        localStorage.setItem("mainManuelle", montant);
       }
 
       window.location.href = "produits.html";

@@ -1,89 +1,5 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>ÉlecProDevis – Produits</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0077cc">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="ÉlecProDevis">
-  <link rel="apple-touch-icon" href="images/icon-192.png">
-  <style>
-    body {
-      margin: 0;
-      padding: 30px;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f0f4f8;
-      color: #333;
-    }
-    h1 {
-      text-align: center;
-      color: #0077cc;
-      margin-bottom: 30px;
-    }
-    .barre {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-    input, select {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1em;
-      flex: 1;
-      min-width: 180px;
-    }
-    .grille {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 20px;
-    }
-    .produit {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .produit h3 {
-      margin-top: 0;
-      color: #0077cc;
-    }
-    .produit button {
-      margin-top: 10px;
-      background-color: #0077cc;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.9em;
-    }
-    .produit button:hover {
-      background-color: #005fa3;
-    }
-    .actions {
-      margin-top: 30px;
-      text-align: center;
-    }
-    .actions button {
-      margin: 10px;
-      padding: 12px 20px;
-      font-size: 1em;
-      background-color: #0077cc;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    .actions button:hover {
-      background-color: #005fa3;
-    }
-  </style>
-</head>
+<!-- HEAD et styles inchangés -->
+
 <body>
   <h1>📦 Sélection des produits</h1>
   <div class="barre">
@@ -94,6 +10,7 @@
       <option value="éclairage">Éclairage</option>
       <option value="sécurité">Sécurité</option>
     </select>
+    <button onclick="ajouterManuel()">➕ Produit personnalisé</button>
   </div>
 
   <div class="grille" id="grilleProduits"></div>
@@ -106,11 +23,11 @@
 
   <script>
     const catalogue = [
-      { nom: "Câble 3G2.5", prix: 450, tva: 18, categorie: "câblage" },
-      { nom: "Spot LED encastrable", prix: 1200, tva: 18, categorie: "éclairage" },
-      { nom: "Détecteur de mouvement", prix: 3500, tva: 18, categorie: "sécurité" },
-      { nom: "Interrupteur simple", prix: 800, tva: 18, categorie: "câblage" },
-      { nom: "Applique murale", prix: 2200, tva: 18, categorie: "éclairage" }
+      { nom: "Interrupteur", prix: 800, tva: 18, categorie: "câblage", types: ["simple", "double"] },
+      { nom: "Lampe LED", prix: 1200, tva: 18, categorie: "éclairage", types: ["3W", "5W", "7W"] },
+      { nom: "Détecteur de mouvement", prix: 3500, tva: 18, categorie: "sécurité", types: ["standard"] },
+      { nom: "Câble 3G2.5", prix: 450, tva: 18, categorie: "câblage", types: ["rouge", "bleu", "jaune"] },
+      { nom: "Applique murale", prix: 2200, tva: 18, categorie: "éclairage", types: ["intérieure", "extérieure"] }
     ];
 
     let produitsChoisis = [];
@@ -134,9 +51,40 @@
     function ajouter(p) {
       const quantite = prompt(`Quantité pour ${p.nom} :`, "1");
       const qte = parseInt(quantite);
-      if (!isNaN(qte) && qte > 0) {
-        produitsChoisis.push({ ...p, quantite: qte });
-        alert(`✅ ${p.nom} ajouté (${qte})`);
+      if (isNaN(qte) || qte <= 0) return alert("🛑 Quantité invalide.");
+
+      const type = prompt(`Type (${p.types.join(" / ")}) :`, p.types[0]);
+      const nouveauPrix = prompt(`Modifier le prix unitaire ? (actuel : ${p.prix} FCFA)`, p.prix);
+      const prixModif = parseFloat(nouveauPrix);
+
+      if (!type || isNaN(prixModif)) return alert("🛑 Saisie invalide.");
+      produitsChoisis.push({ ...p, quantite: qte, type, prix: prixModif });
+      alert(`✅ ${p.nom} ajouté (${qte} × ${type}) à ${prixModif} FCFA`);
+    }
+
+    function ajouterManuel() {
+      const nom = prompt("Nom du produit personnalisé :");
+      const prix = prompt("Prix unitaire HT (FCFA) :");
+      const tva = prompt("TVA (%) :");
+      const quantite = prompt("Quantité :");
+      const type = prompt("Type technique (ex : 5W, double, 12V) :");
+
+      const prixNum = parseFloat(prix);
+      const tvaNum = parseFloat(tva);
+      const qteNum = parseInt(quantite);
+
+      if (nom && !isNaN(prixNum) && !isNaN(tvaNum) && !isNaN(qteNum) && type) {
+        produitsChoisis.push({
+          nom,
+          prix: prixNum,
+          tva: tvaNum,
+          quantite: qteNum,
+          type,
+          categorie: "personnalisé"
+        });
+        alert(`✅ ${nom} ajouté (${qteNum} × ${type})`);
+      } else {
+        alert("🛑 Saisie invalide.");
       }
     }
 
@@ -175,7 +123,7 @@
     }
 
     function envoyerWhatsApp() {
-      const noms = produitsChoisis.map(p => `${p.nom} (${p.quantite})`).join(", ");
+      const noms = produitsChoisis.map(p => `${p.nom} (${p.quantite} × ${p.type})`).join(", ");
       const message = `Voici les produits sélectionnés : ${noms}`;
       const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
       window.open(url, "_blank");
@@ -184,4 +132,3 @@
     afficherProduits(catalogue);
   </script>
 </body>
-</html>

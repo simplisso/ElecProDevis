@@ -3,31 +3,111 @@
 <head>
   <meta charset="UTF-8">
   <title>ÉlecProDevis – Paiement</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0077cc">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ÉlecProDevis">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <style>
+    body {
+      margin: 0;
+      padding: 30px;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #0077cc;
+      margin-bottom: 30px;
+    }
+    .bloc {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 30px;
+      width: 100%;
+      padding: 14px;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+    .confirmation {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
 </head>
 <body>
-  <h1>💳 Déblocage de la personnalisation</h1>
+  <h1>💳 Paiement du devis</h1>
+  <div class="bloc">
+    <label for="montant">Montant à payer (FCFA) :</label>
+    <input type="number" id="montant" placeholder="Ex : 25000">
 
-  <section>
-    <p>Pour ajouter ton logo, nom d’entreprise et contact dans le devis, active la personnalisation premium.</p>
-    <button onclick="validerPaiement()">✅ Activer la personnalisation</button>
-    <button onclick="window.location.href='personnalisation.html'">➡️ Continuer sans paiement</button>
-  </section>
+    <label for="methode">Méthode de paiement :</label>
+    <select id="methode">
+      <option value="momo">Mobile Money (MTN / Moov)</option>
+      <option value="carte">Carte bancaire</option>
+      <option value="espece">Paiement en espèces</option>
+    </select>
+
+    <label for="reference">Référence de transaction :</label>
+    <input type="text" id="reference" placeholder="Ex : TRANS123456">
+
+    <button onclick="validerPaiement()">✅ Valider le paiement</button>
+    <div class="confirmation" id="confirmation"></div>
+  </div>
 
   <script>
     function validerPaiement() {
-      localStorage.setItem("paiementValide", "true");
-      window.location.href = "personnalisation.html";
+      const montant = parseFloat(document.getElementById("montant").value);
+      const methode = document.getElementById("methode").value;
+      const reference = document.getElementById("reference").value.trim();
+
+      if (isNaN(montant) || montant <= 0 || !reference) {
+        alert("🛑 Remplis tous les champs correctement.");
+        return;
+      }
+
+      const paiement = {
+        montant,
+        methode,
+        reference,
+        date: new Date().toLocaleString()
+      };
+
+      localStorage.setItem("paiement", JSON.stringify(paiement));
+      document.getElementById("confirmation").textContent = "✅ Paiement enregistré avec succès.";
     }
   </script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(() => console.log("✅ Service Worker actif"))
-      .catch(err => console.error("❌ Erreur SW", err));
-  }
-</script>
-
 </body>
 </html>

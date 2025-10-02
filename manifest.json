@@ -1,6 +1,7 @@
 {
   "name": "ÉlecProDevis",
-  "short_name": "DevisPro",
+  "short_name": "ÉlecProDevis",
+  "description": "Application de devis technique pour électriciens et métiers spécialisés",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
